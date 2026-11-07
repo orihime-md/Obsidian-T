@@ -1,0 +1,574 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OBSIDIAN T — Enter the Clan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<style>
+:root{
+  --void:#040407;
+  --crypt:#0a0c10;
+  --ash:#12151c;
+  --edge:rgba(57,255,120,.14);
+  --edge-hot:rgba(57,255,120,.45);
+  --toxic:#39ff78;
+  --toxic-dim:#1fae54;
+  --bone:#e6ffe9;
+  --smoke:#5c6b62;
+  --blood:#ff3b3b;
+  --radius:14px;
+  --font-head:'Cinzel',serif;
+  --font-body:'Rajdhani',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:var(--font-body)}
+html,body{height:100%;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%,rgba(31,174,84,.09),transparent 55%),
+    linear-gradient(180deg,var(--void),var(--crypt) 70%,black);
+  color:var(--bone);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:28px 18px;
+  position:relative;
+}
+#nexus{position:fixed;inset:0;z-index:0;pointer-events:none}
+body::after{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.18) 2px 4px);
+  mix-blend-mode:multiply;
+}
+.shell{position:relative;z-index:2;width:100%;max-width:520px;perspective:1200px}
+
+/* ── CARD ── */
+.crypt{
+  background:linear-gradient(165deg,rgba(18,21,28,.92),rgba(8,10,13,.96));
+  border:1px solid var(--edge);
+  border-radius:var(--radius);
+  padding:0 0 34px;
+  box-shadow:
+    0 0 90px rgba(57,255,120,.07),
+    0 30px 60px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:blur(14px);
+  position:relative;overflow:hidden;
+  animation:rise .8s cubic-bezier(.2,.9,.3,1) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(34px) rotateX(6deg)}to{opacity:1;transform:none}}
+.crypt::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--toxic),transparent);
+  opacity:.6;filter:drop-shadow(0 0 6px var(--toxic));
+}
+
+/* ── CREST ── */
+.crest{display:flex;flex-direction:column;align-items:center;padding:44px 34px 10px}
+.sigil{
+  width:88px;height:88px;position:relative;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:center;
+}
+.sigil svg{width:100%;height:100%;overflow:visible}
+.sigil .ring{
+  fill:none;stroke:var(--toxic-dim);stroke-width:1.2;
+  transform-origin:center;
+  animation:orbit 14s linear infinite;
+}
+.sigil .ring2{
+  fill:none;stroke:var(--toxic);stroke-width:.8;stroke-dasharray:4 10;
+  transform-origin:center;
+  animation:orbit 9s linear infinite reverse;
+  opacity:.7;
+}
+@keyframes orbit{to{transform:rotate(360deg)}}
+.sigil .core{
+  fill:url(?);fill:#0d1310;stroke:var(--toxic);stroke-width:1.6;
+  filter:drop-shadow(0 0 12px rgba(57,255,120,.7));
+  animation:corepulse 3.4s ease-in-out infinite;
+}
+@keyframes corepulse{0%,100%{filter:drop-shadow(0 0 8px rgba(57,255,120,.5))}50%{filter:drop-shadow(0 0 22px rgba(57,255,120,.95))}}
+.sigil .eye{fill:var(--toxic);filter:drop-shadow(0 0 6px var(--toxic))}
+.sigil .marks{stroke:var(--toxic-dim);stroke-width:1;opacity:.55}
+.sigil .marks line{animation:tick 2s ease-in-out infinite}
+@keyframes tick{50%{opacity:.15}}
+
+.crest h1{
+  font-family:var(--font-head);font-size:34px;font-weight:900;
+  letter-spacing:12px;text-indent:12px;line-height:1;
+  background:linear-gradient(180deg,#f2fff5 20%,var(--toxic) 55%,var(--toxic-dim));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 16px rgba(57,255,120,.35));
+  position:relative;
+}
+.crest h1::after{
+  content:attr(data-text);position:absolute;inset:0;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  background:linear-gradient(180deg,#f2fff5,var(--toxic));
+}
+.crest .tag{
+  margin-top:10px;font-size:12px;letter-spacing:6px;text-transform:uppercase;
+  color:var(--smoke);
+}
+.rule{
+  width:64%;height:1px;margin:20px auto 0;
+  background:linear-gradient(90deg,transparent,var(--edge-hot),transparent);
+}
+.rule span{
+  display:block;width:5px;height:5px;margin:-3px auto 0;
+  background:var(--toxic);transform:rotate(45deg);
+  filter:drop-shadow(0 0 6px var(--toxic));
+}
+
+/* ── FORM ── */
+.ritual{padding:24px 36px 0}
+.field{position:relative;margin-bottom:6px}
+.field input{
+  width:100%;padding:15px 18px 15px 48px;font-size:18px;letter-spacing:2px;
+  font-weight:600;color:var(--bone);caret-color:var(--toxic);
+  background:linear-gradient(180deg,rgba(4,6,8,.8),rgba(10,14,18,.6));
+  border:1px solid var(--edge);border-radius:10px;outline:none;
+  transition:border-color .25s,box-shadow .25s,background .25s;
+}
+.field input::placeholder{color:#3d4a42;letter-spacing:1px;font-weight:400}
+.field input:focus{
+  border-color:var(--edge-hot);
+  box-shadow:0 0 0 3px rgba(57,255,120,.08),inset 0 0 20px rgba(57,255,120,.05);
+}
+.field .mark{
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);
+  width:20px;height:20px;fill:var(--toxic-dim);pointer-events:none;
+  transition:fill .25s,filter .25s;
+}
+.field input:focus ~ .mark{fill:var(--toxic);filter:drop-shadow(0 0 5px var(--toxic))}
+.field .hint{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:11px;letter-spacing:2px;color:#33413a;pointer-events:none;
+}
+
+.btn{
+  position:relative;width:100%;margin-top:16px;padding:16px;
+  font-family:var(--font-head);font-size:14px;font-weight:700;letter-spacing:5px;
+  color:#031a0b;background:linear-gradient(135deg,var(--toxic),#159c46);
+  border:none;border-radius:10px;cursor:pointer;overflow:hidden;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+  transition:transform .15s,filter .2s;
+  box-shadow:0 6px 24px rgba(57,255,120,.25);
+}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.15)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn::after{
+  content:'';position:absolute;top:0;left:-80%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:skewX(-20deg);
+  animation:shear 3.2s ease-in-out infinite;
+}
+@keyframes shear{0%,60%,100%{left:-80%}30%{left:130%}}
+
+.msg{
+  margin-top:14px;min-height:18px;text-align:center;
+  font-size:14px;letter-spacing:1.5px;color:var(--smoke);
+  transition:color .3s;
+}
+.msg.ok{color:var(--toxic);text-shadow:0 0 12px rgba(57,255,120,.4)}
+.msg.error{color:var(--blood);text-shadow:0 0 12px rgba(255,59,59,.35)}
+
+/* ── CODE ORACLE ── */
+.oracle{
+  max-height:0;overflow:hidden;margin:0 36px;
+  transition:max-height .6s cubic-bezier(.2,.9,.3,1);
+}
+.oracle.show{max-height:280px}
+.oracle-inner{
+  margin-top:22px;text-align:center;padding:22px 18px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(57,255,120,.06),transparent 70%),rgba(4,7,6,.7);
+  border:1px solid var(--edge);border-radius:12px;
+}
+.oracle .omen{
+  font-size:10px;letter-spacing:6px;text-transform:uppercase;color:var(--toxic-dim);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.oracle .omen::before,.oracle .omen::after{
+  content:'';width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--toxic-dim));
+}
+.oracle .omen::after{background:linear-gradient(270deg,transparent,var(--toxic-dim))}
+.rune{
+  font-family:var(--font-head);font-size:40px;font-weight:900;letter-spacing:9px;text-indent:9px;
+  margin:14px 0;color:var(--toxic);
+  text-shadow:0 0 8px rgba(57,255,120,.8),0 0 32px rgba(57,255,120,.35);
+  user-select:all;
+}
+.rune.ghost{color:#20362a;animation:none}
+.wait{font-size:13px;color:var(--smoke);letter-spacing:2px}
+.wait i{font-style:normal;animation:blink 1.3s infinite}
+.wait i:nth-child(2){animation-delay:.2s}
+.wait i:nth-child(3){animation-delay:.4s}
+@keyframes blink{50%{opacity:.15}}
+.wait.blessed{color:var(--toxic);animation:none}
+
+/* ── TENETS ── */
+.tenets{padding:26px 40px 0}
+.tenets h2{
+  font-size:11px;letter-spacing:6px;text-transform:uppercase;
+  color:var(--smoke);text-align:center;margin-bottom:14px;
+}
+.tenets ol{list-style:none;counter-reset:rite}
+.tenets li{
+  counter-increment:rite;
+  position:relative;padding:7px 0 7px 40px;
+  font-size:14.5px;letter-spacing:.5px;color:#b9ccc0;line-height:1.5;
+}
+.tenets li::before{
+  content:counter(rite,upper-roman);
+  position:absolute;left:2px;top:7px;
+  font-family:var(--font-head);font-size:12px;color:var(--toxic-dim);
+}
+.tenets b{color:var(--bone)}
+.tenets li::after{
+  content:'';position:absolute;left:22px;top:14px;width:8px;height:1px;
+  background:var(--toxic-dim);opacity:.5;
+}
+
+/* ── CLAN ROSTER ── */
+.roster{padding:28px 36px 0}
+.roster h2{
+  font-size:11px;letter-spacing:6px;text-transform:uppercase;
+  color:var(--smoke);text-align:center;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+}
+.roster h2::before,.roster h2::after{
+  content:'';flex:1;max-width:70px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--edge-hot));
+}
+.roster h2::after{background:linear-gradient(270deg,transparent,var(--edge-hot))}
+.roster-empty{
+  text-align:center;font-size:13px;color:#3c4a42;letter-spacing:3px;padding:10px 0;
+}
+.soul{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;margin-bottom:7px;
+  background:linear-gradient(90deg,rgba(10,14,12,.6),rgba(6,9,8,.3));
+  border:1px solid rgba(57,255,120,.08);border-radius:9px;
+  font-size:15px;font-weight:600;letter-spacing:1.5px;
+  animation:rise .5s both;
+}
+.soul .who{display:flex;align-items:center;gap:11px}
+.soul .avatar{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--toxic);
+  background:radial-gradient(circle,rgba(57,255,120,.18),rgba(57,255,120,.03));
+  border:1px solid var(--edge);
+}
+.state{
+  display:flex;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:3px;font-weight:700;
+  padding:4px 12px;border-radius:99px;
+}
+.state::before{content:'';width:6px;height:6px;border-radius:50%}
+.state.open{color:var(--toxic);background:rgba(57,255,120,.09)}
+.state.open::before{background:var(--toxic);box-shadow:0 0 8px var(--toxic);animation:blink 2s infinite}
+.state.x{color:#c96f3b;background:rgba(255,120,60,.08)}
+.state.x::before{background:#c96f3b}
+.state.dead{color:#9d5252;background:rgba(255,80,80,.08)}
+.state.dead::before{background:var(--blood)}
+
+footer{
+  margin-top:30px;text-align:center;
+  font-size:10px;letter-spacing:4px;color:#2e3a34;text-transform:uppercase;
+}
+footer b{color:var(--toxic-dim);font-weight:700}
+
+::selection{background:rgba(57,255,120,.3);color:#fff}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-thumb{background:#15201a;border-radius:4px}
+@media(max-width:480px){
+  .ritual,.roster{padding-left:24px;padding-right:24px}
+  .tenets{padding-left:28px;padding-right:28px}
+  .crest h1{font-size:26px;letter-spacing:8px;text-indent:8px}
+  .rune{font-size:30px;letter-spacing:6px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="nexus"></canvas>
+
+<div class="shell">
+  <div class="crypt">
+
+    <div class="crest">
+      <div class="sigil">
+        <svg viewBox="0 0 100 100">
+          <circle class="ring" cx="50" cy="50" r="46"/>
+          <circle class="ring2" cx="50" cy="50" r="38"/>
+          <polygon class="core" points="50,16 82,42 71,80 29,80 18,42"/>
+          <circle class="eye" cx="50" cy="47" r="4"/>
+          <g class="marks">
+            <line x1="50" y1="6" x2="50" y2="12"/>
+            <line x1="50" y1="88" x2="50" y2="94"/>
+            <line x1="6" y1="50" x2="12" y2="50"/>
+            <line x1="88" y1="50" x2="94" y2="50"/>
+            <line x1="20" y1="20" x2="24" y2="24"/>
+            <line x1="80" y1="80" x2="76" y2="76"/>
+          </g>
+        </svg>
+      </div>
+      <h1 data-text="OBSIDIAN T">OBSIDIAN T</h1>
+      <div class="tag">The Clan Binds By Number</div>
+      <div class="rule"><span></span></div>
+    </div>
+
+    <form class="ritual" onsubmit="event.preventDefault();requestPair()">
+      <div class="field">
+        <svg class="mark" viewBox="0 0 24 24"><path d="M12 2C8.2 2 5 5.2 5 9v4.6l-1.6 2.5c-.5.8.1 1.9 1 1.9h15.2c.9 0 1.5-1.1 1-1.9L19 13.6V9c0-3.8-3.2-7-7-7zm-2 17a2 2 0 004 0"/></svg>
+        <input id="number" type="tel" inputmode="numeric" placeholder="2348123456789" autocomplete="off" maxlength="16"/>
+        <span class="hint">CC+NUMBER</span>
+      </div>
+      <button class="btn" id="pairBtn" type="submit">SUMMON PAIRING CODE</button>
+    </form>
+
+    <div class="msg" id="msg">All bound numbers strike as one through <b>.dan</b></div>
+
+    <div class="oracle" id="oracle">
+      <div class="oracle-inner">
+        <div class="omen">The Rune</div>
+        <div class="rune ghost" id="code">········</div>
+        <div class="wait" id="wait">awaiting the link<i>.</i><i>.</i><i>.</i></div>
+      </div>
+    </div>
+
+    <div class="tenets">
+      <h2>Rite of Binding</h2>
+      <ol>
+        <li>Summon the rune with <b>your number</b>.</li>
+        <li>Open WhatsApp — <b>Settings → Linked Devices</b>.</li>
+        <li>Choose <b>Link with phone number instead</b>.</li>
+        <li>Type the rune. Your number joins the clan.</li>
+        <li>Command the clan: <b>.menu</b> · <b>.dan 234xxxxxxxxxx</b></li>
+      </ol>
+    </div>
+
+    <div class="roster">
+      <h2>Clan Roster</h2>
+      <div id="rosterList"><div class="roster-empty">the crypt is empty…</div></div>
+    </div>
+
+    <footer>OBSIDIAN <b>T</b> · many numbers · one strike · <b>.dan</b></footer>
+  </div>
+</div>
+
+<script>
+/* ── THREE.JS NEXUS — drifting toxic particle constellation ── */
+(function nexus(){
+  const canvas = document.getElementById('nexus');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:false });
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 1, 120);
+  camera.position.z = 42;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6));
+  renderer.setSize(innerWidth, innerHeight);
+
+  const COUNT = innerWidth < 640 ? 380 : 720;
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(COUNT*3);
+  const seeds = new Float32Array(COUNT);
+  for (let i=0;i<COUNT;i++){
+    const r = 12 + Math.random()*46;
+    const th = Math.random()*Math.PI*2;
+    const ph = Math.acos(2*Math.random()-1);
+    pos[i*3]   = r*Math.sin(ph)*Math.cos(th);
+    pos[i*3+1] = r*Math.sin(ph)*Math.sin(th)*.55;
+    pos[i*3+2] = r*Math.cos(ph);
+    seeds[i] = Math.random()*Math.PI*2;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+
+  const material = new THREE.PointsMaterial({
+    size:.5, color:0x39ff78, transparent:true, opacity:.55,
+    blending:THREE.AdditiveBlending, depthWrite:false,
+    map:(()=>{
+      const c=document.createElement('canvas'); c.width=c.height=32;
+      const g=c.getContext('2d');
+      const rad=g.createRadialGradient(16,16,0,16,16,16);
+      rad.addColorStop(0,'rgba(255,255,255,1)');
+      rad.addColorStop(.35,'rgba(57,255,120,.9)');
+      rad.addColorStop(1,'rgba(57,255,120,0)');
+      g.fillStyle=rad; g.fillRect(0,0,32,32);
+      return new THREE.CanvasTexture(c);
+    })()
+  });
+  const cloud = new THREE.Points(geo, material);
+  scene.add(cloud);
+
+  const core = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(9,1),
+    new THREE.MeshBasicMaterial({ color:0x1fae54, wireframe:true, transparent:true, opacity:.14 })
+  );
+  scene.add(core);
+
+  const core2 = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(13,1),
+    new THREE.MeshBasicMaterial({ color:0x39ff78, wireframe:true, transparent:true, opacity:.05 })
+  );
+  scene.add(core2);
+
+  let mx=0,my=0,tx=0,ty=0;
+  addEventListener('pointermove',e=>{
+    tx=(e.clientX/innerWidth-.5);
+    ty=(e.clientY/innerHeight-.5);
+  });
+
+  let t=0;
+  (function loop(){
+    requestAnimationFrame(loop);
+    t+=.004;
+    mx+=(tx-mx)*.03; my+=(ty-my)*.03;
+    cloud.rotation.y=t+mx*.6;
+    cloud.rotation.x=Math.sin(t*.5)*.15+my*.4;
+    core.rotation.y=t*1.4+mx;  core.rotation.x=t*.7;
+    core2.rotation.y=-t+mx*1.2; core2.rotation.z=t*.4;
+    camera.position.x=mx*5; camera.position.y=-my*4;
+    camera.lookAt(0,0,0);
+    const s=1+Math.sin(t*2)*.06; core.scale.set(s,s,s);
+    material.opacity=.42+Math.sin(t*1.6)*.14;
+    renderer.render(scene,camera);
+  })();
+
+  addEventListener('resize',()=>{
+    camera.aspect=innerWidth/innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+  });
+})();
+
+/* ── CLAN API ── */
+let pollTimer=null, pollAttempts=0;
+const MAX_POLLS=90;
+const $=id=>document.getElementById(id);
+
+function authHeaders(){
+  const t=localStorage.getItem('obsidian_token');
+  return t?{'x-obsidian-token':t}:{};
+}
+function setMsg(text,cls=''){
+  const el=$('msg'); el.textContent=text; el.className='msg '+cls;
+}
+async function api(url,opts={}){
+  const call=o=>fetch(url,{...o,cache:'no-store',headers:{...authHeaders(),...(o.headers||{})}});
+  let r=await call(opts);
+  if(r.status===401){
+    const t=prompt('Speak the clan password (AUTH_TOKEN):');
+    if(t){localStorage.setItem('obsidian_token',t);r=await call(opts);}
+  }
+  return r;
+}
+
+function revealOracle(){
+  $('oracle').classList.add('show');
+}
+function showCode(code){
+  revealOracle();
+  const c=$('code');
+  if(code){c.textContent=code;c.classList.remove('ghost');}
+  $('wait').innerHTML='awaiting the link<i>.</i><i>.</i><i>.</i>';
+  $('wait').className='wait';
+}
+function sealOracle(text,ok){
+  const w=$('wait');
+  w.textContent=text;
+  w.className='wait'+(ok?' blessed':' dead');
+}
+
+function stopPoll(){clearInterval(pollTimer);pollTimer=null;}
+
+async function requestPair(){
+  stopPoll();
+  const number=$('number').value.replace(/\D/g,'');
+  if(number.length<10){setMsg('A true number carries the country code.','error');return;}
+  const btn=$('pairBtn');
+  btn.disabled=true;
+  setMsg('The crypt stirs…','ok');
+  try{
+    const r=await api('/api/pair',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({number})
+    });
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'The ritual failed.');
+    showCode(d.code);
+    startPoll(number);
+    setMsg('Speak the rune into WhatsApp before it fades.','ok');
+  }catch(e){
+    setMsg(e.message,'error');
+    sealOracle('the rite was interrupted.',false);
+    stopPoll();
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+function startPoll(number){
+  pollAttempts=0;stopPoll();
+  pollTimer=setInterval(async()=>{
+    pollAttempts++;
+    if(pollAttempts>=MAX_POLLS){
+      stopPoll();
+      sealOracle('⌛ the rune expired.',false);
+      setMsg('The rune faded. Summon a new one.','error');
+      return;
+    }
+    try{
+      const r=await api('/api/pair/status?number='+number);
+      const d=await r.json();
+      if(!d.ok){
+        stopPoll();
+        sealOracle('❌ the binding failed.',false);
+        setMsg(d.error||'Binding failed.','error');
+        return;
+      }
+      if(d.code)showCode(d.code);
+      if(d.status==='failed'){
+        stopPoll();
+        sealOracle('❌ the binding failed.',false);
+        setMsg('Binding failed. Summon a new rune.','error');
+      }else if(d.status==='down'){
+        stopPoll();
+        sealOracle('💀 the number broke its link.',false);
+        setMsg('The number disconnected.','error');
+      }else if(d.status==='open'){
+        stopPoll();
+        sealOracle('☠️ bound to the clan.',true);
+        setMsg('Your number serves the clan. Use .menu on WhatsApp.','ok');
+        loadRoster();
+      }
+    }catch{/* transient poll miss — the cap will stop us */}
+  },4000);
+}
+
+const PILL={open:'<span class="state open">BOUND</span>',
+            down:'<span class="state dead">SEVERED</span>'};
+async function loadRoster(){
+  try{
+    const r=await api('/api/sessions');
+    const d=await r.json();
+    const list=$('rosterList');
+    if(!d.sessions?.length){
+      list.innerHTML='<div class="roster-empty">the crypt is empty…</div>';
+      return;
+    }
+    list.innerHTML=d.sessions.map((s,i)=>`
+      <div class="soul" style="animation-delay:${i*.07}s">
+        <div class="who"><span class="avatar">☠</span><span>+${s.number}</span></div>
+        ${PILL.open&&''}${PILL[s.status]||'<span class="state x">'+s.status.toUpperCase()+'</span>'}
+      </div>`).join('');
+  }catch{}
+}
+loadRoster();
+setInterval(loadRoster,15000);
+</script>
+</body>
+</html>
